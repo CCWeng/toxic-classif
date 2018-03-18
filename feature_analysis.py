@@ -35,7 +35,7 @@ from pandas.tools.plotting import scatter_matrix
 
 from datetime import datetime
 
-import fastText as ft
+import fasttext as ft
 
 import itertools
 
