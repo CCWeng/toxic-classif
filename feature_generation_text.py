@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import fastText as ft
+import fasttext as ft
 import sys
 
 import data_process as dp
