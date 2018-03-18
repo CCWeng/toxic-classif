@@ -93,7 +93,8 @@ sfm = SelectFromModel(lr)
 # X_trn = trn[tfidf_columns]
 all_tfidf_columns = word_tfidf_columns + char_tfidf_columns
 
-X_trn = trn[all_tfidf_columns]
+# X_trn = trn[all_tfidf_columns]
+X_trn = trn[use_columns]
 y_trn = trn[target]
 
 
@@ -104,8 +105,8 @@ pipe = Pipeline(estimators)
 
 
 param_grid = {
-    # 'sfm__threshold': [0.2, 0.4, 0.6, 0.8, 1.0]
-    'sfm__threshold': [0.1, 0.2, 0.3]
+    'sfm__threshold': [0.2, 0.4, 0.6, 0.8, 1.0]
+    # 'sfm__threshold': [0.1, 0.2, 0.3]
     # 'sfm__threshold': [0.05, 0.1, 0.15]
     # 'sfm__threshold': [0.05, 0.01, 0.001, 0.0001]
 }
@@ -129,28 +130,33 @@ gsearch.grid_scores_, gsearch.best_params_, gsearch.best_score_
 
 
 
-
 sfm = SelectFromModel(lr, threshold=0.2)
-# sfm.fit(trn[all_tfidf_columns], trn[target])
-sfm.fit(trn[all_tfidf_columns], trn[target])
+sfm.fit(trn[use_columns], trn[target])
 support = sfm.get_support()
 
-new_tfidf_columns = [c for c, s in zip(all_tfidf_columns, support) if s]
+new_use_columns = [c for c, s in zip(use_columns, support) if s]
+del_columns = [c for c, s in zip(use_columns, support) if not s]
+use_columns = new_use_columns
+
+trn.drop(del_columns, axis=1, inplace=True)
+tst.drop(del_columns, axis=1, inplace=True)
+
+# sfm = SelectFromModel(lr, threshold=0.2)
+# sfm.fit(trn[all_tfidf_columns], trn[target])
+# sfm.fit(trn[all_tfidf_columns], trn[target])
+# support = sfm.get_support()
+
+# new_tfidf_columns = [c for c, s in zip(all_tfidf_columns, support) if s]
 
 
 
-use_columns = list()
-use_columns += new_tfidf_columns
-use_columns += wcount_columns
-# use_columns += word_exist_columns
-use_columns += oof_columns
-use_columns += smooth_columns
-use_columns += ft_pr_columns
-
-
-
-
-
+# use_columns = list()
+# use_columns += new_tfidf_columns
+# use_columns += wcount_columns
+# # use_columns += word_exist_columns
+# use_columns += oof_columns
+# use_columns += smooth_columns
+# use_columns += ft_pr_columns
 
 
 X_trn = trn[use_columns]
@@ -175,11 +181,12 @@ xgb1 = XGBClassifier(
     seed=27)
 
 
-xgb1.fit(X_trn, y_trn, eval_set=[(X_trn, y_trn), (X_tst, y_tst)], eval_metric='auc', early_stopping_rounds=200)
+# xgb1.fit(X_trn, y_trn, eval_set=[(X_trn, y_trn), (X_tst, y_tst)], eval_metric='auc', early_stopping_rounds=200)
 
 # pdb.run("ml.xgbfit(xgb1, df_train2, df_val2, use_columns)")
-pdb.run("ml.xgbfit(xgb1, trn, tst, use_columns[:100], printFeatureImportance=False)")
+# pdb.run("ml.xgbfit(xgb1, trn, tst, use_columns[:100], printFeatureImportance=False)")
 ml.xgbfit(xgb1, trn, tst, use_columns, printFeatureImportance=False, early_stopping_rounds=200)
+ml.xgbfit(xgb1, trn, tst, use_columns, printFeatureImportance=False, early_stopping_rounds=200, useTrainCV=False)
 
 
 
@@ -205,7 +212,7 @@ param_test1 = {
 gsearch1 = GridSearchCV(
     estimator = XGBClassifier( 
         learning_rate =0.1, 
-        n_estimators=209, 
+        n_estimators=490, 
         max_depth=5,
         min_child_weight=1, 
         gamma=0, 

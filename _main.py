@@ -421,8 +421,8 @@ use_columns += ft_pr_columns
 
 res12 = ml.validataion(trn, tst, use_columns, targets, model)
 
-gsearch.grid_scores_, gsearch.best_params_, gsearch.best_score_
 
+res13 = ml.validataion(trn, tst, new_use_columns, targets, model)
 
 
 
@@ -628,4 +628,6 @@ pdb.run("fg2.CreateFastTextColumns(trn, tst, ft_params)")
 trn, tst, ft_lb_columns, ft_pr_columns = fg2.CreateFastTextColumns(trn, tst, ft_params)
 
 
+import unicodedata
+unicodedata.normalize('NFKD', title).encode('ascii','ignore')
 

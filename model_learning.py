@@ -105,19 +105,21 @@ def xgbfit(alg, dtrain, dtest, predictors,
         
     dtrain_pred = alg.predict(dtrain[predictors])
     dtest_pred = alg.predict(dtest[predictors])
+    
+    auc_trn = roc_auc_score(dtrain[target], dtrain_pred)
+    auc_tst = roc_auc_score(dtest[target], dtest_pred)
 
-    auc_trn = roc_auc_score(log_target_trn, dtrain_pred)
-    auc_tst = roc_auc_score(log_target_tst, dtest_pred)
-    print "\nModel Report"
+    # auc_trn = roc_auc_score(log_target_trn, dtrain_pred)
+    # auc_tst = roc_auc_score(log_target_tst, dtest_pred)
+    # print "\nModel Report"
     print "auc score (Train): %f" % (auc_trn)
     print "auc score (Test): %f" % (auc_tst)
 
-
     if printFeatureImportance:
-        feat_imp = pd.Series(alg.booster().get_fscore()).sort_values(ascending=False)
-        feat_imp.plot(kind='bar', title='Feature Importances')
-        plt.ylabel('Feature Importance Score')
-        plt.show()
+    	feat_imp = pd.Series(alg.booster().get_fscore()).sort_values(ascending=False)
+    	feat_imp.plot(kind='bar', title='Feature Importances')
+    	plt.ylabel('Feature Importance Score')
+    	plt.show()
 
     return 
 
