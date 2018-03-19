@@ -70,18 +70,13 @@ def CreateFastTextColumns(trn, tst, ft_params):
 
 			clf = ft.supervised(ft_files[tgt]['trn'], 'ft_model', epoch=epoch, word_ngrams=n_gram, lr=lr, bucket=2000000)
 
-			pred = clf.predict(pred_text)
-
-			pred_lb = [int(p[0][-1]) for p in pred[0]]
-			pred_pr = pred[1].reshape((len(pred_lb),))
+			pred = clf.predict_proba(pred_text)
+			pred_lb = [int(p[0][0]) for p in pred]
+			pred_pr = [float(p[0][1]) for p in pred]
 
 			trn.loc[prd_I, lb_c] = pred_lb
 			trn.loc[prd_I, pr_c] = pred_pr
 
-			# preds = tmp[0]
-			# preds = [int(p[0][-1]) for p in preds]
-
-			# trn.loc[prd_I, lb_c] = preds
 
 		sys.stdout.write('done.\n')
 		sys.stdout.write(" test data ... ")
@@ -92,14 +87,9 @@ def CreateFastTextColumns(trn, tst, ft_params):
 
 		clf = ft.supervised(ft_files[tgt]['trn'], 'ft_model', epoch=epoch, word_ngrams=n_gram, lr=lr, bucket=2000000)
 
-		# preds = clf.predict(pred_text)[0]
-		# preds = [int(p[0][-1]) for p in preds]
-		# tst[lb_c] = preds
-
-		pred = clf.predict(pred_text)
-
-		pred_lb = [int(p[0][-1]) for p in pred[0]]
-		pred_pr = pred[1].reshape((len(pred_lb),))
+		pred = clf.predict_proba(pred_text)
+		pred_lb = [int(p[0][0]) for p in pred]
+		pred_pr = [float(p[0][1]) for p in pred]
 
 		tst[lb_c] = pred_lb
 		tst[pr_c] = pred_pr
