@@ -59,8 +59,8 @@ def GridSearchFastText(f_trn, f_tst, params, silent=True):
 	best_p_param = dict()
 	best_r_param = dict()
 
-	for n_gram, epoch, lr in itertools.product(params['wordNgrams'], params['epoch'], params['lr']):
-		clf = ft.supervised(f_trn, 'ft_model', wordNgrams=n_gram, epoch=epoch, lr=lr, verbose=0)
+	for n_gram, epoch, lr in itertools.product(params['word_ngrams'], params['epoch'], params['lr']):
+		clf = ft.supervised(f_trn, 'ft_model', word_ngrams=n_gram, epoch=epoch, lr=lr, verbose=0)
 		res = clf.test(f_tst)
 
 		p = res[1]
@@ -69,29 +69,29 @@ def GridSearchFastText(f_trn, f_tst, params, silent=True):
 		results.append((n_gram, epoch, lr, p, r))
 		if p > max_p:
 			max_p = p
-			best_p_param['wordNgrams'] = n_gram
+			best_p_param['word_ngrams'] = n_gram
 			best_p_param['epoch'] = epoch
 			best_p_param['lr'] = lr
 
 		if r > max_r:
 			max_r = r
-			best_r_param['wordNgrams'] = n_gram
+			best_r_param['word_ngrams'] = n_gram
 			best_r_param['epoch'] = epoch
 			best_r_param['lr'] = lr
 
 	print "\n== Precision Grids ==\n"
 	if not silent:
 		for n_gram, epoch, lr, p, r in results:
-			print "wordNgrams = %d, epoch = %d, lr = %.2f, precision = %.5f" % (n_gram, epoch, lr, p)
-	print "best params : wordNgrams = %d, epoch = %d, lr = %.2f, precision = %.5f" \
-		% (best_p_param['wordNgrams'], best_p_param['epoch'], best_p_param['lr'], max_p)
+			print "word_ngrams = %d, epoch = %d, lr = %.2f, precision = %.5f" % (n_gram, epoch, lr, p)
+	print "best params : word_ngrams = %d, epoch = %d, lr = %.2f, precision = %.5f" \
+		% (best_p_param['word_ngrams'], best_p_param['epoch'], best_p_param['lr'], max_p)
 
 	print "\n== Recall Grids ==\n"
 	if not silent:
 		for n_gram, epoch, lr, p, r in results:
-			print "wordNgrams = %d, epoch = %d, lr = %.2f, recall = %.5f" % (n_gram, epoch, lr, r)
-	print "best params : wordNgrams = %d, epoch = %d, lr = %.2f, recall = %.5f" \
-		% (best_p_param['wordNgrams'], best_p_param['epoch'], best_p_param['lr'], max_r)
+			print "word_ngrams = %d, epoch = %d, lr = %.2f, recall = %.5f" % (n_gram, epoch, lr, r)
+	print "best params : word_ngrams = %d, epoch = %d, lr = %.2f, recall = %.5f" \
+		% (best_p_param['word_ngrams'], best_p_param['epoch'], best_p_param['lr'], max_r)
 
 	return best_p_param, best_r_param
 

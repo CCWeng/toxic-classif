@@ -52,7 +52,7 @@ def CreateFastTextColumns(trn, tst, ft_params):
 		pr_columns.append(pr_c)
 
 		epoch = ft_params[tgt]['epoch']
-		n_gram = ft_params[tgt]['wordNgrams']
+		n_gram = ft_params[tgt]['word_ngrams']
 		lr = ft_params[tgt]['lr']
 
 		use_columns = ['comment_text', tgt]
@@ -68,7 +68,7 @@ def CreateFastTextColumns(trn, tst, ft_params):
 			# pred_text = trn.loc[prd_I, 'comment_text'].apply(lambda x: x.decode('utf-8').encode('ascii', 'ignore').replace('\n', ' '))
 			# pred_text = pred_text.values.tolist()
 
-			clf = ft.supervised(ft_files[tgt]['trn'], 'ft_model', epoch=epoch, wordNgrams=n_gram, lr=lr, verbose=0)
+			clf = ft.supervised(ft_files[tgt]['trn'], 'ft_model', epoch=epoch, word_ngrams=n_gram, lr=lr, verbose=0)
 
 			pred = clf.predict(pred_text)
 
@@ -90,7 +90,7 @@ def CreateFastTextColumns(trn, tst, ft_params):
 		ft_files = dp.CreateFasttextFiles(trn[use_columns], tst[use_columns], '__fasttext2', [tgt], verbose=0)
 		pred_text = read_ft_file(ft_files[tgt]['tst'])
 
-		clf = ft.supervised(ft_files[tgt]['trn'], 'ft_model', epoch=epoch, wordNgrams=n_gram, lr=lr, verbose=0)
+		clf = ft.supervised(ft_files[tgt]['trn'], 'ft_model', epoch=epoch, word_ngrams=n_gram, lr=lr, verbose=0)
 
 		# preds = clf.predict(pred_text)[0]
 		# preds = [int(p[0][-1]) for p in preds]
