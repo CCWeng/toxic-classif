@@ -63,8 +63,8 @@ def GridSearchFastText(f_trn, f_tst, params, silent=True):
 		clf = ft.supervised(f_trn, 'ft_model', word_ngrams=n_gram, epoch=epoch, lr=lr, silent=True, bucket=200000)
 		res = clf.test(f_tst)
 
-		p = res[1]
-		r = res[2]
+		p = res.precision
+		r = res.recall
 
 		results.append((n_gram, epoch, lr, p, r))
 		if p > max_p:
