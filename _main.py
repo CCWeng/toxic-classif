@@ -614,7 +614,7 @@ pdb.run("dp.CreateFasttextFiles(trn, tst, '__fasttext')")
 ft_files = dp.CreateFasttextFiles(trn, tst, '__fasttext')
 
 params = dict()
-params['wordNgrams'] = [1, 2, 3]
+params['word_ngrams'] = [1, 2, 3]
 params['epoch'] = [1, 5, 15, 25]
 params['lr'] = [0.1, 0.4, 0.7, 1.0]
 
