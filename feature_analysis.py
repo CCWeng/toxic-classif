@@ -60,7 +60,7 @@ def GridSearchFastText(f_trn, f_tst, params, silent=True):
 	best_r_param = dict()
 
 	for n_gram, epoch, lr in itertools.product(params['word_ngrams'], params['epoch'], params['lr']):
-		clf = ft.supervised(f_trn, 'ft_model', word_ngrams=n_gram, epoch=epoch, lr=lr, silent=True)
+		clf = ft.supervised(f_trn, 'ft_model', word_ngrams=n_gram, epoch=epoch, lr=lr, silent=True, bucket=200000)
 		res = clf.test(f_tst)
 
 		p = res[1]

@@ -1,2 +1,8 @@
-#byte code files generated from compilation
+# Byte code files generated from compilation
 *.pyc
+*.bin
+
+
+# fastText file
+__fasttext/*
+__fasttext2/*
