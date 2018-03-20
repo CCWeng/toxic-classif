@@ -87,40 +87,28 @@ word_vectorizer = TfidfVectorizer(
 	strip_accents='unicode',
 	sublinear_tf=False,
 	ngram_range=(1, 1), 
-	max_features=None )
+	max_features=None,
+	max_features=10000 )
 
 trn, tst, word_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, word_vectorizer, postfix='_word')
 
 
-# char_vectorizer = TfidfVectorizer(
-# 	min_df=min_df,
-# 	token_pattern=tok,
-# 	analyzer='char',
-# 	strip_accents='unicode',
-# 	sublinear_tf=True,
-# 	ngram_range=(3, 3),
-# 	max_features=None,
-# 	stop_words='english')
+char_vectorizer = TfidfVectorizer(
+	min_df=min_df,
+	token_pattern=tok,
+	analyzer='char',
+	strip_accents='unicode',
+	sublinear_tf=True,
+	ngram_range=(3, 3),
+	max_features=None,
+	stop_words='english', 
+	max_features=50000)
 
-# trn, tst, char_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, char_vectorizer, postfix='_char')
+trn, tst, char_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, char_vectorizer, postfix='_char')
 
 
-#===
 
-# orig_vectorizer = TfidfVectorizer(min_df=min_df, token_pattern=r'(?u)\b\w*[a-zA-Z]\w*\b')
-
-# trn, tst, tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst)
-
-# results = cross_val_score(model, trn[tfidf_columns], trn['toxic'], cv=5)
-# results2 = cross_val_score(model, trn[word_tfidf_columns], trn['toxic'], cv=5)
-# results3 = cross_val_score(model, trn[word_tfidf_columns], trn['toxic'], cv=5)
-# results4 = cross_val_score(model, trn[word_tfidf_columns], trn['toxic'], cv=5)
-# results5 = cross_val_score(model, trn[word_tfidf_columns], trn['toxic'], cv=5)
-# results6 = cross_val_score(model, trn[word_tfidf_columns+char_tfidf_columns], trn['toxic'], cv=5)
-# results7 = cross_val_score(model, trn[new_tfidf_columns], trn['toxic'], cv=5)
-# results8 = cross_val_score(model, trn[new_tfidf_columns], trn['toxic'], cv=5)
-
-trn, tst, tfidf_lr_columns = fg2.CreateTfidfLogisticRegColumns(trn, tst)
+# trn, tst, tfidf_lr_columns = fg2.CreateTfidfLogisticRegColumns(trn, tst)
 
 
 
@@ -184,12 +172,11 @@ trn, tst, ft_lb_columns, ft_pr_columns = fg2.CreateFastTextColumns(trn, tst, ft_
 
 
 use_columns = list()
-# use_columns += tfidf_columns
 use_columns += word_tfidf_columns
-use_columns += tfidf_lr_columns
-# use_columns += char_tfidf_columns
+use_columns += char_tfidf_columns
+# use_columns += tfidf_lr_columns
+
 use_columns += wcount_columns
-# use_columns += word_exist_columns
 use_columns += oof_columns
 use_columns += smooth_columns
 use_columns += ft_pr_columns
@@ -206,31 +193,86 @@ from sklearn.linear_model import LogisticRegression
 model = LogisticRegression()
 
 
+print "train data size :", trn.shape
+print "test data size :", tst.shape
 
 
 print "== Train & Predict =="
 
+
+## Logistic Regression
 scores = []
 submission = pd.DataFrame.from_dict({'id': tst['id']})
 for tgt in targets:
-    trn[tgt] = trn[tgt]
-    classifier = LogisticRegression(C=0.1, solver='sag')
-
-    cv_score = np.mean(cross_val_score(classifier, trn[use_columns], trn[tgt], cv=3, scoring='roc_auc'))
-    scores.append(cv_score)
-    print('CV score for class {} is {}'.format(tgt, cv_score))
-
-    classifier.fit(trn[use_columns], trn[tgt])
-    submission[tgt] = classifier.predict_proba(tst[use_columns])[:, 1]
+	trn[tgt] = trn[tgt]
+	classifier = LogisticRegression(C=0.1, solver='sag')
+	cv_score = np.mean(cross_val_score(classifier, trn[use_columns], trn[tgt], cv=3, scoring='roc_auc'))
+	scores.append(cv_score)
+	print('CV score for class {} is {}'.format(tgt, cv_score))
+	classifier.fit(trn[use_columns], trn[tgt])
+	submission[tgt] = classifier.predict_proba(tst[use_columns])[:, 1]
 
 print('Total CV score is {}'.format(np.mean(scores)))
 
-submission.to_csv('__output/submission.csv', index=False)
+submission.to_csv('__output/submission_lr.csv', index=False)
 
 
-# use_columns = list()
-# use_columns += tfidf_columns
-# use_columns += wcount_columns
+## XGBoost
 
-# use_columns += word_exist_columns
-# use_columns += oof_columns
+
+# from xgboost.sklearn import XGBClassifier
+
+# xgb4 = XGBClassifier(
+# 	learning_rate =0.01,
+# 	n_estimators=5000,
+# 	max_depth=3,
+# 	min_child_weight=1,
+# 	gamma=0.2,
+# 	subsample=0.8,
+# 	colsample_bytree=0.8,
+# 	reg_alpha=0.001,
+# 	objective= 'binary:logistic',
+# 	nthread=4,
+# 	scale_pos_weight=1,
+# 	seed=27 )
+
+
+# xgb5 = XGBClassifier(
+# 	learning_rate =0.01,
+# 	n_estimators=5000,
+# 	max_depth=4,
+# 	min_child_weight=6,
+# 	gamma=0,
+# 	subsample=0.8,
+# 	colsample_bytree=0.8,
+# 	reg_alpha=0.005,
+# 	objective= 'binary:logistic',
+# 	nthread=4,
+# 	scale_pos_weight=1,
+# 	seed=27 )
+
+
+# scores = []
+# submission = pd.DataFrame.from_dict({'id': tst['id']})
+# for tgt in targets:
+# 	trn[tgt] = trn[tgt]
+# 	classifier = xgb4
+# 	classifier.fit(trn[use_columns], trn[tgt])
+# 	submission[tgt] = 1 - classifier.predict_proba(tst[use_columns])[:, 0]
+
+# print('Total CV score is {}'.format(np.mean(scores)))
+
+# submission.to_csv('__output/submission_xgb4.csv', index=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
