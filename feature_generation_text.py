@@ -85,7 +85,12 @@ def read_ft_file(fpath):
 			lb = line[-11:]
 			if lb not in ['__label__0\n', '__label__1\n']:
 				print 'Error : inconsistent fasttext file format.'
-			text.append(line[:-12])
+
+			txt = line[:-12]
+			if len(txt) == 0:
+				txt = ' '
+
+			text.append(txt)
 
 	return text
 
@@ -127,10 +132,7 @@ def CreateFastTextColumns(trn, tst, ft_params):
 
 			ft_files = dp.CreateFasttextFiles(trn.loc[lrn_I, use_columns], trn.loc[prd_I, use_columns], '__fasttext2', [tgt], verbose=0)
 			pred_text = read_ft_file(ft_files[tgt]['tst'])
-			for i in range(len(pred_text)):
-				if len(pred_text[i]) == 0:
-					pred_text[i] = ' '
-					
+			
 			# pred_text = trn.loc[prd_I, 'comment_text'].apply(lambda x: x.decode('utf-8').encode('ascii', 'ignore').replace('\n', ' '))
 			# pred_text = pred_text.values.tolist()
 
