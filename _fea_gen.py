@@ -27,8 +27,8 @@ trn, tst = train_test_split(trn, train_size=0.15, test_size=0.08)
 
 
 #===
-# min_df = 0.001
-# tok = r'(?u)\b\w*[a-zA-Z]\w*\b'
+min_df = 0.001
+tok = r'(?u)\b\w*[a-zA-Z]\w*\b'
 
 
 # from sklearn.model_selection import cross_val_score
