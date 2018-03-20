@@ -83,13 +83,14 @@ def xgbfit(alg, dtrain, dtest, predictors,
 	useTrainCV=True, 
 	printFeatureImportance=True, 
 	folds=None, cv_folds=5, 
-	early_stopping_rounds=None):
+	early_stopping_rounds=None, 
+	target=target ):
     
     if useTrainCV:
         xgb_param = alg.get_xgb_params()
         xgtrain = xgb.DMatrix(dtrain[predictors].values, label=dtrain[target].values)
         cvresult = xgb.cv(xgb_param, xgtrain, num_boost_round=alg.get_params()['n_estimators'], folds=folds, 
-        	nfold=cv_folds, metrics='auc', early_stopping_rounds=early_stopping_rounds, verbose_eval=True)
+        	nfold=cv_folds, metrics='auc', early_stopping_rounds=early_stopping_rounds, verbose_eval=False)
 
         print "best n_estimators = %d" % cvresult.shape[0]
         print "CV Score (Train) : Mean - %.7g | Std - %.7g " % (cvresult.iloc[-1]['train-auc-mean'], cvresult.iloc[-1]['train-auc-std'])

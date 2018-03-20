@@ -180,8 +180,8 @@ xgb1 = XGBClassifier(
 
 # pdb.run("ml.xgbfit(xgb1, df_train2, df_val2, use_columns)")
 # pdb.run("ml.xgbfit(xgb1, trn, tst, use_columns[:100], printFeatureImportance=False)")
-ml.xgbfit(xgb1, trn, tst, use_columns, printFeatureImportance=False, early_stopping_rounds=200)
-ml.xgbfit(xgb1, trn, tst, use_columns, printFeatureImportance=False, early_stopping_rounds=200, useTrainCV=False)
+ml.xgbfit(xgb1, trn, tst, use_columns, printFeatureImportance=False, early_stopping_rounds=200, target=target)
+# ml.xgbfit(xgb1, trn, tst, use_columns, printFeatureImportance=False, early_stopping_rounds=200, useTrainCV=False)
 
 
 
@@ -327,13 +327,6 @@ xgb2 = XGBClassifier(
 ml.xgbfit(xgb2, trn, tst, use_columns, printFeatureImportance=False)
 
 
-'''
-Model Report
-gini score (Train): 0.440322, (Test) 0.241820
-
-'''
-
-
 
 
 param_test4 = {
@@ -450,10 +443,6 @@ xgb3 = XGBClassifier(
 ml.xgbfit(xgb3, trn, tst, use_columns, printFeatureImportance=False, early_stopping_rounds=100)
 
 
-'''
-Model Report
-gini score (Train): 0.440315, (Test) 0.241823
-'''
 
 
 
