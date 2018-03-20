@@ -6,43 +6,41 @@
 
 
 
-ft_params=dict()
-ft_params['toxic'] = {'epoch': 5, 'lr': 1.0, 'word_ngrams': 1}
-ft_params['severe_toxic'] = {'epoch': 1, 'lr': 0.4, 'word_ngrams': 2}
-ft_params['obscene'] = {'epoch': 25, 'lr': 0.1, 'word_ngrams': 1}
-ft_params['threat'] = {'epoch': 15, 'lr': 0.4, 'word_ngrams': 2}
-ft_params['insult'] = {'epoch': 25, 'lr': 0.1, 'word_ngrams': 2}
-ft_params['identity_hate'] = {'epoch': 25, 'lr': 0.7, 'word_ngrams': 2}
+# ft_params=dict()
+# ft_params['toxic'] = {'epoch': 5, 'lr': 1.0, 'word_ngrams': 1}
+# ft_params['severe_toxic'] = {'epoch': 1, 'lr': 0.4, 'word_ngrams': 2}
+# ft_params['obscene'] = {'epoch': 25, 'lr': 0.1, 'word_ngrams': 1}
+# ft_params['threat'] = {'epoch': 15, 'lr': 0.4, 'word_ngrams': 2}
+# ft_params['insult'] = {'epoch': 25, 'lr': 0.1, 'word_ngrams': 2}
+# ft_params['identity_hate'] = {'epoch': 25, 'lr': 0.7, 'word_ngrams': 2}
 
 
 
 
-for tgt in targets:
-	tst[tgt] = 0
-
-trn, tst, ft_lb_columns, ft_pr_columns = fg2.CreateFastTextColumns(trn, tst, ft_params)
+# for tgt in targets:
+# 	tst[tgt] = 0
 
 
-use_columns = list()
-use_columns += word_tfidf_columns
-# use_columns += char_tfidf_columns
-use_columns += tfidf_lr_columns
-
-use_columns += wcount_columns
-use_columns += oof_columns
-use_columns += smooth_columns
-use_columns += ft_pr_columns
+# pdb.run("fg2.CreateFastTextColumns(trn, tst, ft_params)")
+# trn, tst, ft_lb_columns, ft_pr_columns = fg2.CreateFastTextColumns(trn, tst, ft_params)
 
 
+# use_columns = list()
+# use_columns += word_tfidf_columns
+# # use_columns += char_tfidf_columns
+# use_columns += tfidf_lr_columns
+
+# use_columns += wcount_columns
+# use_columns += oof_columns
+# use_columns += smooth_columns
+# use_columns += ft_pr_columns
 
 
 
-use_columns2 = tfidf_lr_columns + wcount_columns + oof_columns + smooth_columns + ft_pr_columns
 
+# from sklearn.linear_model import LogisticRegression
 
-from sklearn.linear_model import LogisticRegression
-
-model = LogisticRegression()
+# model = LogisticRegression()
 
 
 print "train data size :", trn.shape
@@ -51,6 +49,7 @@ print "test data size :", tst.shape
 
 print "== Train & Predict =="
 
+from sklearn.model_selection import cross_val_score
 
 ## Logistic Regression
 scores = []
