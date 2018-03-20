@@ -67,6 +67,7 @@ def CreateTfidfLogisticRegColumns(trn, tst):
 		# scores.append(cv_score)
 		# print('CV score for class {} is {}'.format(tgt, cv_score))
 		classifier.fit(trn_features, trn_target)
+		trn[new_col] = classifier.predict_proba(trn_features)[:, 1]
 		tst[new_col] = classifier.predict_proba(tst_features)[:, 1]
 
 	return trn, tst, new_columns
