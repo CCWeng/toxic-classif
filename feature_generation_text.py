@@ -13,6 +13,67 @@ targets = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hat
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import StratifiedKFold
+from scipy.sparse import hstack
+from sklearn.linear_model import LogisticRegression
+
+
+
+
+
+def CreateTfidfLogisticRegColumns(trn, tst):
+	
+	targets = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
+
+	trn_text = trn['comment_text']
+	tst_text = tst['comment_text']
+	all_text = pd.concat([trn_text, tst_text])
+
+	word_vectorizer = TfidfVectorizer(
+		sublinear_tf=True,
+		strip_accents='unicode',
+		analyzer='word',
+		token_pattern=r'\w{1,}',
+		stop_words='english',
+		ngram_range=(1, 1),
+		max_features=10000)
+
+	word_vectorizer.fit(all_text)
+	train_word_features = word_vectorizer.transform(trn_text)
+	test_word_features = word_vectorizer.transform(tst_text)
+
+	char_vectorizer = TfidfVectorizer(
+		sublinear_tf=True,
+		strip_accents='unicode',
+		analyzer='char',
+		stop_words='english',
+		ngram_range=(2, 6),
+		max_features=50000)
+
+	char_vectorizer.fit(all_text)
+	train_char_features = char_vectorizer.transform(trn_text)
+	test_char_features = char_vectorizer.transform(tst_text)
+
+	trn_features = hstack([train_char_features, train_word_features])
+	tst_features = hstack([test_char_features, test_word_features])
+
+	new_columns = list()
+	for tgt in targets:
+		new_col = tgt + '_tfidf_lr'
+		new_columns.append(new_col)
+
+		trn_target = trn[tgt]
+		classifier = LogisticRegression(C=0.1, solver='sag')
+		# cv_score = np.mean(cross_val_score(classifier, trn_features, trn_target, cv=3, scoring='roc_auc'))
+		# scores.append(cv_score)
+		# print('CV score for class {} is {}'.format(tgt, cv_score))
+		classifier.fit(trn_features, trn_target)
+		tst[new_col] = classifier.predict_proba(tst_features)[:, 1]
+
+	return trn, tst, new_columns
+
+
+
+
 
 
 

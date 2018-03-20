@@ -27,57 +27,57 @@ trn, tst = train_test_split(trn, train_size=0.15, test_size=0.08)
 
 
 #===
-min_df = 0.001
-tok = r'(?u)\b\w*[a-zA-Z]\w*\b'
+# min_df = 0.001
+# tok = r'(?u)\b\w*[a-zA-Z]\w*\b'
 
 
-from sklearn.model_selection import cross_val_score
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import make_scorer
-from sklearn.metrics import roc_auc_score
-from sklearn.grid_search import GridSearchCV
-import time
+# from sklearn.model_selection import cross_val_score
+# from sklearn.pipeline import Pipeline
+# from sklearn.metrics import make_scorer
+# from sklearn.metrics import roc_auc_score
+# from sklearn.grid_search import GridSearchCV
+# import time
 
 
-tfidf_vec = TfidfVectorizer(
-	min_df=min_df, 
-	token_pattern=tok, 
-	analyzer='char',
-	strip_accents='unicode',
-	ngram_range=(2, 2),
-	sublinear_tf=True,
-	stop_words='english'
-	)
+# tfidf_vec = TfidfVectorizer(
+# 	min_df=min_df, 
+# 	token_pattern=tok, 
+# 	analyzer='char',
+# 	strip_accents='unicode',
+# 	ngram_range=(2, 2),
+# 	sublinear_tf=True,
+# 	stop_words='english'
+# 	)
 
-estimators = list()
-estimators.append(('vectr', tfidf_vec))
-estimators.append(('lr', LogisticRegression()))
-pipe = Pipeline(estimators)
-
-
-param_grid = dict()
-# param_grid['vectr__strip_accents'] = ['ascii', 'unicode', None]
-# param_grid['vectr__sublinear_tf'] = [False, True]
-param_grid['vectr__ngram_range'] = [(i, i) for i in range(2, 7)]
-# param_grid['vectr__stop_words'] = ['english', None]
+# estimators = list()
+# estimators.append(('vectr', tfidf_vec))
+# estimators.append(('lr', LogisticRegression()))
+# pipe = Pipeline(estimators)
 
 
-
-gsearch = GridSearchCV(
-	estimator=pipe,
-	param_grid=param_grid,
-	scoring=make_scorer(roc_auc_score),
-	iid=False,
-	cv=5)
+# param_grid = dict()
+# # param_grid['vectr__strip_accents'] = ['ascii', 'unicode', None]
+# # param_grid['vectr__sublinear_tf'] = [False, True]
+# param_grid['vectr__ngram_range'] = [(i, i) for i in range(2, 7)]
+# # param_grid['vectr__stop_words'] = ['english', None]
 
 
-start_time = time.time()
-gsearch.fit(trn['comment_text'], trn['toxic'])
-elapsed_time = time.time() - start_time
-print elapsed_time
+
+# gsearch = GridSearchCV(
+# 	estimator=pipe,
+# 	param_grid=param_grid,
+# 	scoring=make_scorer(roc_auc_score),
+# 	iid=False,
+# 	cv=5)
 
 
-gsearch.grid_scores_, gsearch.best_params_, gsearch.best_score_
+# start_time = time.time()
+# gsearch.fit(trn['comment_text'], trn['toxic'])
+# elapsed_time = time.time() - start_time
+# print elapsed_time
+
+
+# gsearch.grid_scores_, gsearch.best_params_, gsearch.best_score_
 
 
 word_vectorizer = TfidfVectorizer(
@@ -92,17 +92,17 @@ word_vectorizer = TfidfVectorizer(
 trn, tst, word_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, word_vectorizer, postfix='_word')
 
 
-char_vectorizer = TfidfVectorizer(
-	min_df=min_df,
-	token_pattern=tok,
-	analyzer='char',
-	strip_accents='unicode',
-	sublinear_tf=True,
-	ngram_range=(3, 3),
-	max_features=None,
-	stop_words='english')
+# char_vectorizer = TfidfVectorizer(
+# 	min_df=min_df,
+# 	token_pattern=tok,
+# 	analyzer='char',
+# 	strip_accents='unicode',
+# 	sublinear_tf=True,
+# 	ngram_range=(3, 3),
+# 	max_features=None,
+# 	stop_words='english')
 
-trn, tst, char_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, char_vectorizer, postfix='_char')
+# trn, tst, char_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, char_vectorizer, postfix='_char')
 
 
 #===
@@ -119,6 +119,8 @@ trn, tst, char_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, char_vectorize
 # results6 = cross_val_score(model, trn[word_tfidf_columns+char_tfidf_columns], trn['toxic'], cv=5)
 # results7 = cross_val_score(model, trn[new_tfidf_columns], trn['toxic'], cv=5)
 # results8 = cross_val_score(model, trn[new_tfidf_columns], trn['toxic'], cv=5)
+
+trn, tst, tfidf_lr_columns = fg2.CreateTfidfLogisticRegColumns(trn, tst)
 
 
 
@@ -184,7 +186,8 @@ trn, tst, ft_lb_columns, ft_pr_columns = fg2.CreateFastTextColumns(trn, tst, ft_
 use_columns = list()
 # use_columns += tfidf_columns
 use_columns += word_tfidf_columns
-use_columns += char_tfidf_columns
+use_columns += tfidf_lr_columns
+# use_columns += char_tfidf_columns
 use_columns += wcount_columns
 # use_columns += word_exist_columns
 use_columns += oof_columns

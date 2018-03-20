@@ -159,11 +159,6 @@ tst.drop(del_columns, axis=1, inplace=True)
 # use_columns += ft_pr_columns
 
 
-X_trn = trn[use_columns]
-y_trn = trn[target]
-X_tst = tst[use_columns]
-y_tst = tst[target]
-
 
 #Choose all predictors except target & IDcols
 
@@ -192,6 +187,11 @@ ml.xgbfit(xgb1, trn, tst, use_columns, printFeatureImportance=False, early_stopp
 
 
 
+
+X_trn = trn[use_columns]
+y_trn = trn[target]
+X_tst = tst[use_columns]
+y_tst = tst[target]
 
 
 # ===
