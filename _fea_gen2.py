@@ -51,19 +51,18 @@ print "== Train & Predict =="
 
 from sklearn.model_selection import cross_val_score
 
+print " LR"
 ## Logistic Regression
 scores = []
 submission = pd.DataFrame.from_dict({'id': tst['id']})
 for tgt in targets:
 	trn[tgt] = trn[tgt]
 	classifier = LogisticRegression(C=0.1, solver='sag')
-	cv_score = np.mean(cross_val_score(classifier, trn[use_columns], trn[tgt], cv=3, scoring='roc_auc'))
-	scores.append(cv_score)
-	print('CV score for class {} is {}'.format(tgt, cv_score))
+	# cv_score = np.mean(cross_val_score(classifier, trn[use_columns], trn[tgt], cv=3, scoring='roc_auc'))
+	# scores.append(cv_score)
+	# print('CV score for class {} is {}'.format(tgt, cv_score))
 	classifier.fit(trn[use_columns], trn[tgt])
 	submission[tgt] = classifier.predict_proba(tst[use_columns])[:, 1]
-
-print('Total CV score is {}'.format(np.mean(scores)))
 
 submission.to_csv('__output/submission_lr.csv', index=False)
 
@@ -71,47 +70,61 @@ submission.to_csv('__output/submission_lr.csv', index=False)
 ## XGBoost
 
 
-# from xgboost.sklearn import XGBClassifier
+from xgboost.sklearn import XGBClassifier
 
-# xgb4 = XGBClassifier(
-# 	learning_rate =0.01,
-# 	n_estimators=5000,
-# 	max_depth=3,
-# 	min_child_weight=1,
-# 	gamma=0.2,
-# 	subsample=0.8,
-# 	colsample_bytree=0.8,
-# 	reg_alpha=0.001,
-# 	objective= 'binary:logistic',
-# 	nthread=4,
-# 	scale_pos_weight=1,
-# 	seed=27 )
+print " xgb4"
 
-
-# xgb5 = XGBClassifier(
-# 	learning_rate =0.01,
-# 	n_estimators=5000,
-# 	max_depth=4,
-# 	min_child_weight=6,
-# 	gamma=0,
-# 	subsample=0.8,
-# 	colsample_bytree=0.8,
-# 	reg_alpha=0.005,
-# 	objective= 'binary:logistic',
-# 	nthread=4,
-# 	scale_pos_weight=1,
-# 	seed=27 )
+xgb4 = XGBClassifier(
+	learning_rate =0.01,
+	n_estimators=5000,
+	max_depth=3,
+	min_child_weight=1,
+	gamma=0.2,
+	subsample=0.8,
+	colsample_bytree=0.8,
+	reg_alpha=0.001,
+	objective= 'binary:logistic',
+	nthread=4,
+	scale_pos_weight=1,
+	seed=27 )
 
 
-# scores = []
-# submission = pd.DataFrame.from_dict({'id': tst['id']})
-# for tgt in targets:
-# 	trn[tgt] = trn[tgt]
-# 	classifier = xgb4
-# 	classifier.fit(trn[use_columns], trn[tgt])
-# 	submission[tgt] = 1 - classifier.predict_proba(tst[use_columns])[:, 0]
+scores = []
+submission = pd.DataFrame.from_dict({'id': tst['id']})
+for tgt in targets:
+	trn[tgt] = trn[tgt]
+	classifier = xgb4
+	classifier.fit(trn[use_columns], trn[tgt])
+	submission[tgt] = 1 - classifier.predict_proba(tst[use_columns])[:, 0]
 
-# print('Total CV score is {}'.format(np.mean(scores)))
 
-# submission.to_csv('__output/submission_xgb4.csv', index=False)
+submission.to_csv('__output/submission_xgb4.csv', index=False)
+
+
+print " xgb5"
+
+xgb5 = XGBClassifier(
+	learning_rate =0.01,
+	n_estimators=5000,
+	max_depth=4,
+	min_child_weight=6,
+	gamma=0,
+	subsample=0.8,
+	colsample_bytree=0.8,
+	reg_alpha=0.005,
+	objective= 'binary:logistic',
+	nthread=4,
+	scale_pos_weight=1,
+	seed=27 )
+
+
+scores = []
+submission = pd.DataFrame.from_dict({'id': tst['id']})
+for tgt in targets:
+	trn[tgt] = trn[tgt]
+	classifier = xgb5
+	classifier.fit(trn[use_columns], trn[tgt])
+	submission[tgt] = 1 - classifier.predict_proba(tst[use_columns])[:, 0]
+
+submission.to_csv('__output/submission_xgb5.csv', index=False)
 
