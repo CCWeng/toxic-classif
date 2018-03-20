@@ -31,12 +31,6 @@ def CreateFasttextFiles(trn, tst, dir_path, targets=targets, verbose=1):
 		comments_trn = trn['comment_text'].apply(lambda x: x.decode('utf-8').encode('ascii', 'ignore').replace('\n', ' '))
 		comments_tst = tst['comment_text'].apply(lambda x: x.decode('utf-8').encode('ascii', 'ignore').replace('\n', ' '))
 
-		# comments_trn = trn['comment_text'].apply(lambda x: x.replace('\n', ' '))
-		# comments_tst = tst['comment_text'].apply(lambda x: x.replace('\n', ' '))
-		
-		# comments_trn = trn['comment_text'].apply(lambda x: unicode(x.replace('\n', ' '), 'utf-8'))
-		# comments_tst = tst['comment_text'].apply(lambda x: unicode(x.replace('\n', ' '), 'utf-8'))
-
 		labels_trn = trn[tgt].apply(lambda x: '__label__' + str(x))
 		labels_tst = tst[tgt].apply(lambda x: '__label__' + str(x))
 
