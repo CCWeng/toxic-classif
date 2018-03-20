@@ -87,7 +87,6 @@ word_vectorizer = TfidfVectorizer(
 	strip_accents='unicode',
 	sublinear_tf=False,
 	ngram_range=(1, 1), 
-	max_features=None,
 	max_features=10000 )
 
 trn, tst, word_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, word_vectorizer, postfix='_word')
@@ -100,7 +99,6 @@ char_vectorizer = TfidfVectorizer(
 	strip_accents='unicode',
 	sublinear_tf=True,
 	ngram_range=(3, 3),
-	max_features=None,
 	stop_words='english', 
 	max_features=50000)
 
