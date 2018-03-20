@@ -631,3 +631,23 @@ trn, tst, ft_lb_columns, ft_pr_columns = fg2.CreateFastTextColumns(trn, tst, ft_
 import unicodedata
 unicodedata.normalize('NFKD', title).encode('ascii','ignore')
 
+
+
+# Logistic Regression
+
+scores = []
+submission = pd.DataFrame.from_dict({'id': tst['id']})
+for tgt in targets:
+    trn[tgt] = trn[tgt]
+    classifier = LogisticRegression(C=0.1, solver='sag')
+
+    cv_score = np.mean(cross_val_score(classifier, trn[use_columns], trn[tgt], cv=3, scoring='roc_auc'))
+    scores.append(cv_score)
+    print('CV score for class {} is {}'.format(tgt, cv_score))
+
+    classifier.fit(trn[use_columns], trn[tgt])
+    submission[tgt] = classifier.predict_proba(tst[use_columns])[:, 1]
+
+print('Total CV score is {}'.format(np.mean(scores)))
+
+submission.to_csv('__output/submission.csv', index=False)

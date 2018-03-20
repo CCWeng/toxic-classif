@@ -23,7 +23,7 @@ targets = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hat
 
 
 # trn, tst = train_test_split(trn, train_size=0.35, test_size=0.15)
-trn, tst = train_test_split(trn, train_size=0.15, test_size=0.08)
+# trn, tst = train_test_split(trn, train_size=0.15, test_size=0.08)
 
 
 #===
@@ -197,10 +197,35 @@ use_columns += ft_pr_columns
 
 
 
+
+use_columns2 = tfidf_lr_columns + wcount_columns + oof_columns + smooth_columns + ft_pr_columns
+
+
 from sklearn.linear_model import LogisticRegression
 
 model = LogisticRegression()
 
+
+
+
+print "== Train & Predict =="
+
+scores = []
+submission = pd.DataFrame.from_dict({'id': tst['id']})
+for tgt in targets:
+    trn[tgt] = trn[tgt]
+    classifier = LogisticRegression(C=0.1, solver='sag')
+
+    cv_score = np.mean(cross_val_score(classifier, trn[use_columns], trn[tgt], cv=3, scoring='roc_auc'))
+    scores.append(cv_score)
+    print('CV score for class {} is {}'.format(tgt, cv_score))
+
+    classifier.fit(trn[use_columns], trn[tgt])
+    submission[tgt] = classifier.predict_proba(tst[use_columns])[:, 1]
+
+print('Total CV score is {}'.format(np.mean(scores)))
+
+submission.to_csv('__output/submission.csv', index=False)
 
 
 # use_columns = list()

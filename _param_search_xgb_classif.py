@@ -181,7 +181,7 @@ xgb1 = XGBClassifier(
 # pdb.run("ml.xgbfit(xgb1, df_train2, df_val2, use_columns)")
 # pdb.run("ml.xgbfit(xgb1, trn, tst, use_columns[:100], printFeatureImportance=False)")
 ml.xgbfit(xgb1, trn, tst, use_columns, printFeatureImportance=False, early_stopping_rounds=200, target=target)
-# ml.xgbfit(xgb1, trn, tst, use_columns, printFeatureImportance=False, early_stopping_rounds=200, useTrainCV=False)
+ml.xgbfit(xgb1, trn, tst, use_columns, printFeatureImportance=False, early_stopping_rounds=200, target=target, useTrainCV=False)
 
 
 
