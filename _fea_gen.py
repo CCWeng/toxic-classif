@@ -92,21 +92,21 @@ word_vectorizer = TfidfVectorizer(
 trn, tst, word_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, word_vectorizer, postfix='_word')
 
 
-char_vectorizer = TfidfVectorizer(
-	min_df=min_df,
-	token_pattern=tok,
-	analyzer='char',
-	strip_accents='unicode',
-	sublinear_tf=True,
-	ngram_range=(3, 3),
-	stop_words='english', 
-	max_features=50000)
+# char_vectorizer = TfidfVectorizer(
+# 	min_df=min_df,
+# 	token_pattern=tok,
+# 	analyzer='char',
+# 	strip_accents='unicode',
+# 	sublinear_tf=True,
+# 	ngram_range=(3, 3),
+# 	stop_words='english', 
+# 	max_features=50000)
 
-trn, tst, char_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, char_vectorizer, postfix='_char')
+# trn, tst, char_tfidf_columns = fg2.CreateTfidfFeaturess(trn, tst, char_vectorizer, postfix='_char')
 
 
 
-# trn, tst, tfidf_lr_columns = fg2.CreateTfidfLogisticRegColumns(trn, tst)
+trn, tst, tfidf_lr_columns = fg2.CreateTfidfLogisticRegColumns(trn, tst)
 
 
 
@@ -171,8 +171,8 @@ trn, tst, ft_lb_columns, ft_pr_columns = fg2.CreateFastTextColumns(trn, tst, ft_
 
 use_columns = list()
 use_columns += word_tfidf_columns
-use_columns += char_tfidf_columns
-# use_columns += tfidf_lr_columns
+# use_columns += char_tfidf_columns
+use_columns += tfidf_lr_columns
 
 use_columns += wcount_columns
 use_columns += oof_columns
